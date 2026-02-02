@@ -1,0 +1,279 @@
+Metadata-Version: 2.4
+Name: fcc-hard-carbon
+Version: 1.0.0
+Summary: Process optimization tool for producing hard carbon anode materials from FCC decant oil for Na-ion batteries
+Author: FCC Hard Carbon Contributors
+Maintainer: FCC Hard Carbon Contributors
+License: MIT
+Project-URL: Homepage, https://github.com/yourusername/fcc-hard-carbon-optimizer
+Project-URL: Documentation, https://github.com/yourusername/fcc-hard-carbon-optimizer#readme
+Project-URL: Repository, https://github.com/yourusername/fcc-hard-carbon-optimizer.git
+Project-URL: Issues, https://github.com/yourusername/fcc-hard-carbon-optimizer/issues
+Project-URL: Changelog, https://github.com/yourusername/fcc-hard-carbon-optimizer/blob/main/CHANGELOG.md
+Keywords: hard-carbon,sodium-ion-battery,anode-material,FCC-decant-oil,process-optimization,carbonization,battery-materials,energy-storage
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: Manufacturing
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Topic :: Scientific/Engineering :: Chemistry
+Classifier: Topic :: Scientific/Engineering :: Physics
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy>=1.21.0
+Requires-Dist: scipy>=1.7.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0; extra == "dev"
+Requires-Dist: flake8>=5.0; extra == "dev"
+Requires-Dist: black>=23.0; extra == "dev"
+Provides-Extra: dashboard
+Requires-Dist: streamlit>=1.20.0; extra == "dashboard"
+Requires-Dist: pandas>=1.3.0; extra == "dashboard"
+Requires-Dist: plotly>=5.0.0; extra == "dashboard"
+Provides-Extra: all
+Requires-Dist: fcc-hard-carbon[dashboard,dev]; extra == "all"
+Dynamic: license-file
+
+# 🔋 FCC Hard Carbon Optimizer
+
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://fcc-hard-carbon.streamlit.app)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Tests](https://github.com/yourusername/fcc-hard-carbon-optimizer/workflows/Tests/badge.svg)](https://github.com/yourusername/fcc-hard-carbon-optimizer/actions)
+
+**Convert FCC Decant Oil → Battery-Grade Hard Carbon for Na-ion Batteries**
+
+A process optimization tool for producing hard carbon anode materials from refinery waste streams. Targets the "Goldilocks window" (d002 = 0.37-0.40 nm) for optimal sodium-ion battery performance.
+
+![Dashboard Preview](docs/images/dashboard_preview.png)
+
+---
+
+## 🚀 Quick Start
+
+### Option 1: Web App (No Installation)
+👉 **[Launch App](https://fcc-hard-carbon.streamlit.app)**
+
+### Option 2: Local Installation
+```bash
+# Clone repository
+git clone https://github.com/yourusername/fcc-hard-carbon-optimizer.git
+cd fcc-hard-carbon-optimizer
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run dashboard
+streamlit run app.py
+```
+
+### Option 3: Python Package
+```bash
+pip install fcc-hard-carbon
+```
+
+---
+
+## 🎯 Features
+
+| Feature | Description |
+|---------|-------------|
+| **Property Prediction** | Predict d002, capacity, ICE, yield from feedstock & process |
+| **Process Optimization** | Latin Hypercube sampling to find optimal conditions |
+| **Sensitivity Analysis** | Identify critical process parameters |
+| **Contour Mapping** | Visualize Goldilocks window across parameter space |
+| **Business Case** | CAPEX, OPEX, NPV, IRR calculations |
+
+---
+
+## 📊 The Science
+
+### Goldilocks Window
+Hard carbon for Na-ion batteries requires **disordered** structure:
+- **d002 < 0.37 nm**: Too graphitic → Na⁺ can't intercalate
+- **d002 > 0.40 nm**: Too amorphous → Poor cycling stability
+- **d002 = 0.37-0.40 nm**: Goldilocks zone → Optimal Na⁺ storage
+
+### Why FCC Decant Oil?
+| Property | Advantage |
+|----------|-----------|
+| High sulfur (2-5%) | Creates crosslinking → prevents graphitization |
+| High aromatics | Good carbon yield (30-40%) |
+| Waste stream | Zero feedstock cost |
+| Abundant | Refineries produce millions of tonnes |
+
+### Key Correlations
+```
+↑ Sulfur content  →  ↑ d002 (more disordered)
+↑ Temperature     →  ↓ d002 (more graphitic)
+↑ Heating rate    →  ↑ d002 (kinetic disorder)
+↑ Hold time       →  ↓ d002 (equilibrium ordering)
+```
+
+---
+
+## 💻 Usage
+
+### Command Line
+```bash
+# Single prediction
+python cli.py --sulfur 3.5 --temp 1100
+
+# Optimization
+python cli.py --optimize --samples 1000
+
+# Sensitivity analysis
+python cli.py --sensitivity
+
+# Business case
+python cli.py --economics --scenarios
+```
+
+### Python API
+```python
+from fcc_hard_carbon import HardCarbonPredictor, ProcessOptimizer, EconomicsCalculator
+
+# Predict properties
+predictor = HardCarbonPredictor()
+result = predictor.predict(
+    feedstock={'sulfur': 3.5, 'oxygen': 1.0},
+    process={'temp': 1100, 'rate': 5, 'time': 2}
+)
+print(f"d002: {result.d002_nm} nm")
+print(f"Capacity: {result.capacity_mAh_g} mAh/g")
+print(f"In Goldilocks: {result.in_goldilocks}")
+
+# Optimize process
+optimizer = ProcessOptimizer(sulfur=3.5)
+top_conditions = optimizer.optimize(n_samples=1000, top_n=10)
+
+# Business case
+econ = EconomicsCalculator(fcc_tpy=10000, yield_pct=35)
+print(f"NPV: ₹{econ.get_npv_irr()['npv_cr']} Crore")
+```
+
+---
+
+## 📈 Sample Results
+
+### Optimization Output
+```
+🎯 LATIN HYPERCUBE OPTIMIZATION
+Feedstock: S=3.5% | Samples: 1000
+
+📊 STATS: 822/1000 in Goldilocks (82.2%)
+   Best: Score=80.0, Capacity=320 mAh/g
+
+🏆 TOP 10 CONDITIONS:
+ # |   Temp |  Rate |  Time |    d002 |   Cap | Score
+ 1 |   1112 |  17.9 |  1.21 |  0.3850 |   320 |  80.0
+ 2 |    968 |  17.7 |  2.45 |  0.3850 |   320 |  80.0
+...
+```
+
+### Economics Output
+```
+📦 SCALE: 10,000 TPY FCC Oil → 3,500 TPY Hard Carbon
+🏭 CAPEX: ₹40 Crore
+⚙️ OPEX: ₹5.6 Cr/yr (₹16/kg)
+📈 REVENUE: ₹97 Cr/yr @ ₹277/kg
+💵 NPV: ₹353 Cr | IRR: 174% | Payback: 1 year
+```
+
+---
+
+## 🗂️ Project Structure
+
+```
+fcc-hard-carbon-optimizer/
+├── app.py                  # Streamlit dashboard
+├── cli.py                  # Command-line interface
+├── src/fcc_hard_carbon/
+│   ├── __init__.py
+│   ├── models.py           # Core predictors
+│   ├── optimization.py     # LHS, sensitivity
+│   └── economics.py        # Business case
+├── tests/
+│   ├── test_models.py
+│   ├── test_optimization.py
+│   └── test_economics.py
+├── docs/
+│   ├── API.md
+│   └── EXAMPLES.md
+├── examples/
+│   └── quickstart.ipynb
+└── requirements.txt
+```
+
+---
+
+## 🔬 Model Details
+
+### Property Predictors
+
+| Property | Model | Key Dependencies |
+|----------|-------|------------------|
+| d002 | Linear regression | T, S, O, rate, time |
+| Capacity | Gaussian peak | d002 (optimal at 0.385 nm) |
+| ICE | Linear | BET surface area |
+| BET | Process severity | T, rate |
+| Yield | MCR correlation | MCR, aromatics, T |
+
+### Validation Range
+- Temperature: 900-1300°C
+- Sulfur: 1-6 wt%
+- Heating rate: 1-20°C/min
+- Hold time: 0.5-4 hr
+
+---
+
+## 🤝 Contributing
+
+Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+```bash
+# Setup development environment
+git clone https://github.com/yourusername/fcc-hard-carbon-optimizer.git
+cd fcc-hard-carbon-optimizer
+pip install -e ".[dev]"
+
+# Run tests
+pytest tests/
+
+# Run linting
+flake8 src/
+```
+
+---
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+## 📚 References
+
+1. Stevens, D. A., & Dahn, J. R. (2001). High capacity anode materials for rechargeable sodium-ion batteries. *Journal of The Electrochemical Society*, 148(8), A803.
+2. Irisarri, E., Ponrouch, A., & Palacin, M. R. (2015). Hard carbon negative electrode materials for sodium-ion batteries. *Journal of The Electrochemical Society*, 162(14), A2476.
+
+---
+
+## 📧 Contact
+
+- **Issues**: [GitHub Issues](https://github.com/yourusername/fcc-hard-carbon-optimizer/issues)
+- **Email**: your.email@example.com
+
+---
+
+<p align="center">
+  <b>⭐ Star this repo if you find it useful! ⭐</b>
+</p>

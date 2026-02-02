@@ -1,0 +1,28 @@
+# Include documentation
+include README.md
+include LICENSE
+include CHANGELOG.md
+include CONTRIBUTING.md
+
+# Include requirements
+include requirements.txt
+
+# Include type hints marker
+include src/fcc_hard_carbon/py.typed
+
+# Exclude development files
+exclude .gitignore
+exclude .github/*
+exclude .streamlit/*
+
+# Exclude tests from distribution (they're in the repo)
+prune tests
+prune examples
+prune docs
+
+# Exclude build artifacts
+prune build
+prune dist
+prune *.egg-info
+global-exclude __pycache__
+global-exclude *.py[cod]

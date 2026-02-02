@@ -1,0 +1,2 @@
+[console_scripts]
+fcc-hard-carbon = fcc_hard_carbon.cli:main
